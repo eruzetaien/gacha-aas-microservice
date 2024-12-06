@@ -1,5 +1,5 @@
 import React from "react";
-import { Rarity } from "../types/RarityType";
+import { Rarity } from "../types/rarityType";
 
 interface InputRarityModalProps {
   isOpen: boolean;
