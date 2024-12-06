@@ -13,6 +13,7 @@ const ANIMATION_NONE = 2;
 
 const GachaPullPage: React.FC = () => {
   let { gachaSystemName } = useParams<{ gachaSystemName: string | undefined }>();
+  let { userId } = useParams<{ userId: string | undefined }>();
 
   if (!gachaSystemName) {
     return <p className="text-red-500 text-center">Error: Gacha System name is required.</p>;
@@ -44,7 +45,6 @@ const GachaPullPage: React.FC = () => {
   }
 
   const fetchGachaEndpoint = async () => {
-    const userId = localStorage.getItem("user_id");
     if (!gachaSystemName.trim()) {
       return
     }
