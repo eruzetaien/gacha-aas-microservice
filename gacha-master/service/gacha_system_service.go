@@ -11,6 +11,7 @@ import (
 	"gacha-master/repository"
 	"github.com/go-playground/validator/v10"
 	"os"
+	"strings"
 )
 
 type GachaSystemService interface {
@@ -55,10 +56,16 @@ func (service *GachaSystemServiceImpl) Create(ctx context.Context, request *web.
 		panic(exception.NewConflictError("Gacha system with the same name already exists"))
 	}
 
+	gachaEndpoint := createEndpoint(request.Name, userId)
+	parts := strings.Split(gachaEndpoint, "/")
+	var endpointId string
+	endpointId = parts[len(parts)-1]
+
 	gachaSystem := domain.GachaSystem{
-		Name:     request.Name,
-		UserId:   userId,
-		Endpoint: createEndpoint(request.Name, userId),
+		Name:       request.Name,
+		UserId:     userId,
+		Endpoint:   gachaEndpoint,
+		EndpointId: endpointId,
 	}
 
 	service.GachaSystemRepository.Save(ctx, &gachaSystem)

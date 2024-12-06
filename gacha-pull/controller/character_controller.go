@@ -1,13 +1,11 @@
 package controller
 
 import (
-	"fmt"
 	"gacha-pull/helper"
 	"gacha-pull/model/web"
 	"gacha-pull/service"
-	"log"
+	"github.com/go-chi/chi/v5"
 	"net/http"
-	"strings"
 )
 
 type CharacterController interface {
@@ -25,14 +23,9 @@ func NewCharacterController(rarityService service.CharacterService) CharacterCon
 }
 
 func (controller *CharacterControllerImpl) Pull(writer http.ResponseWriter, request *http.Request) {
-	endpoint := request.URL.String()
-	log.Println(request.Host)
-	log.Println(request.Proto)
-	if request.URL.Scheme == "" {
-		endpoint = fmt.Sprintf("%s://%s%s", strings.ToLower(request.Proto[:len(request.Proto)-4]), request.Host, request.URL.RequestURI())
-	}
+	endpointId := chi.URLParam(request, "endpointId")
 
-	selectedCharacter := controller.CharacterService.Pull(request.Context(), endpoint)
+	selectedCharacter := controller.CharacterService.Pull(request.Context(), endpointId)
 
 	webResponse := web.WebResponse{
 		Code:   200,

@@ -26,8 +26,8 @@ func NewGachaSystemRepository(dbpool *pgxpool.Pool) GachaSystemRepository {
 }
 
 func (repository *GachaSystemRepositoryImpl) Save(ctx context.Context, gachaSystem *domain.GachaSystem) {
-	query := `INSERT INTO gacha_system (name, user_id, endpoint) 
-				VALUES ($1, $2, $3) RETURNING id`
+	query := `INSERT INTO gacha_system (name, user_id, endpoint, endpoint_id) 
+				VALUES ($1, $2, $3, $4) RETURNING id`
 
 	tx, err := repository.Dbpool.Begin(ctx)
 	helper.PanicIfError(err, helper.ErrBeginTransaction)
@@ -35,7 +35,7 @@ func (repository *GachaSystemRepositoryImpl) Save(ctx context.Context, gachaSyst
 	defer helper.CommitOrRollback(tx, ctx)
 
 	var id int
-	err = tx.QueryRow(ctx, query, gachaSystem.Name, gachaSystem.UserId, gachaSystem.Endpoint).Scan(&id)
+	err = tx.QueryRow(ctx, query, gachaSystem.Name, gachaSystem.UserId, gachaSystem.Endpoint, gachaSystem.EndpointId).Scan(&id)
 	helper.PanicIfError(err, helper.ErrUserNotFound)
 
 	gachaSystem.Id = id

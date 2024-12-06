@@ -24,7 +24,7 @@ func NewGachaSystemRepository(dbpool *pgxpool.Pool) GachaSystemRepository {
 func (repository *GachaSystemRepositoryImpl) FindByEndpoint(ctx context.Context, endpoint string) *domain.GachaSystem {
 	query := `SELECT id, name, endpoint
 			FROM gacha_system
-			WHERE endpoint = $1`
+			WHERE endpoint_id = $1`
 
 	tx, err := repository.Dbpool.Begin(ctx)
 	helper.PanicIfError(err, helper.ErrBeginTransaction)

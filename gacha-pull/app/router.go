@@ -25,7 +25,7 @@ func NewRouter(
 
 	router.Use(RecoverMiddleware)
 
-	router.Get("/api/v1/gacha/{encryptedId}", characterController.Pull)
+	router.Get("/api/v1/gacha/{endpointId}", characterController.Pull)
 
 	return router
 }

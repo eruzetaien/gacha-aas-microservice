@@ -139,5 +139,4 @@ func (uploader *UploaderServiceImpl) DeleteGachaSystemCharacterImage(ctx context
 	if err != nil && (errors.Is(err, storage.ErrBucketNotExist) || errors.Is(err, storage.ErrObjectNotExist)) {
 		return
 	}
-	helper.PanicIfError(err, "failed to delete object")
 }
