@@ -1,0 +1,37 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*_test
+
+# Output of the go coverage tool
+*.out
+
+# Temporary files
+*.tmp
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+air.conf
+
+# IDE/editor specific files
+.vscode/
+.idea/
+*.swp
+*~
+
+# Docker specific files
+Dockerfile
+.dockerignore
+
+# Logs
+*.log
+
+# Environment files
+.env*
