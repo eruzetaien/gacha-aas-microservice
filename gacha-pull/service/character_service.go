@@ -11,7 +11,7 @@ import (
 )
 
 type CharacterService interface {
-	Pull(ctx context.Context, endpoint string) *web.CharacterResponse
+	Pull(ctx context.Context, endpointId string) *web.CharacterResponse
 }
 
 type CharacterServiceImpl struct {
@@ -32,8 +32,8 @@ func NewCharacterService(
 	}
 }
 
-func (service *CharacterServiceImpl) Pull(ctx context.Context, endpoint string) *web.CharacterResponse {
-	gachaSystem := service.GachaSystemRepository.FindByEndpoint(ctx, endpoint)
+func (service *CharacterServiceImpl) Pull(ctx context.Context, endpointId string) *web.CharacterResponse {
+	gachaSystem := service.GachaSystemRepository.FindByEndpointId(ctx, endpointId)
 	if gachaSystem == nil {
 		panic(exception.NewNotFoundError("Gacha system not found"))
 	}

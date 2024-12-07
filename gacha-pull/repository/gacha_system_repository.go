@@ -8,7 +8,7 @@ import (
 )
 
 type GachaSystemRepository interface {
-	FindByEndpoint(ctx context.Context, endpoint string) *domain.GachaSystem
+	FindByEndpointId(ctx context.Context, endpointId string) *domain.GachaSystem
 }
 
 type GachaSystemRepositoryImpl struct {
@@ -21,8 +21,8 @@ func NewGachaSystemRepository(dbpool *pgxpool.Pool) GachaSystemRepository {
 	}
 }
 
-func (repository *GachaSystemRepositoryImpl) FindByEndpoint(ctx context.Context, endpoint string) *domain.GachaSystem {
-	query := `SELECT id, name, endpoint
+func (repository *GachaSystemRepositoryImpl) FindByEndpointId(ctx context.Context, endpointId string) *domain.GachaSystem {
+	query := `SELECT id, name, endpoint_id
 			FROM gacha_system
 			WHERE endpoint_id = $1`
 
@@ -31,10 +31,10 @@ func (repository *GachaSystemRepositoryImpl) FindByEndpoint(ctx context.Context,
 
 	defer helper.CommitOrRollback(tx, ctx)
 
-	row := tx.QueryRow(ctx, query, endpoint)
+	row := tx.QueryRow(ctx, query, endpointId)
 
 	var gachaSystem domain.GachaSystem
-	err = row.Scan(&gachaSystem.Id, &gachaSystem.Name, &gachaSystem.Endpoint)
+	err = row.Scan(&gachaSystem.Id, &gachaSystem.Name, &gachaSystem.EndpointId)
 	if err != nil {
 		return nil
 	}
