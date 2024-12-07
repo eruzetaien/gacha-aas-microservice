@@ -24,6 +24,6 @@ Gacha SaaS is a cloud-based platform that allows users to create and manage thei
 
 ### 2. Gacha Pulls (For Public Users)
 - Public users can access gacha systems created by gacha managers and perform gacha pulls to receive random character.   
-  ![Pull Gacha](/images/gacha-pull.gif)
+![Pull Gacha](/images/gacha-pull.gif)
 ---
 
