@@ -19,11 +19,11 @@ Gacha SaaS is a cloud-based platform that allows users to create and manage thei
 
 ### 1. Gacha System Management 
 - **Create and Manage Gacha Systems**: Gacha masters can create new gacha systems by defining characters and their rarity levels. They can also edit existing gacha systems, including adding or removing characters, updating rarity levels, and more.
-- **API Integration**: Gacha masters gain access to REST API endpoints for enabling gacha pulls through their applications.
+- **API Integration**: Gacha masters gain access to REST API endpoints for enabling gacha pulls through their applications.  
   ![Manage Gacha](/images/manage-gacha.png)
 
 ### 2. Gacha Pulls (For Public Users)
-- Public users can access gacha systems created by gacha managers and perform gacha pulls to receive random character.
+- Public users can access gacha systems created by gacha managers and perform gacha pulls to receive random character.   
   ![Pull Gacha](/images/gacha-pull.gif)
 ---
 
