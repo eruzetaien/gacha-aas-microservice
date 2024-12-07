@@ -10,8 +10,9 @@ import (
 	"gacha-master/model/web"
 	"gacha-master/repository"
 	"github.com/go-playground/validator/v10"
+	"github.com/segmentio/asm/base64"
+	"log"
 	"os"
-	"strings"
 )
 
 type GachaSystemService interface {
@@ -56,24 +57,21 @@ func (service *GachaSystemServiceImpl) Create(ctx context.Context, request *web.
 		panic(exception.NewConflictError("Gacha system with the same name already exists"))
 	}
 
-	gachaEndpoint := createEndpoint(request.Name, userId)
-	parts := strings.Split(gachaEndpoint, "/")
-	var endpointId string
-	endpointId = parts[len(parts)-1]
+	endpointId := createEndpointId(request.Name, userId)
 
 	gachaSystem := domain.GachaSystem{
 		Name:       request.Name,
 		UserId:     userId,
-		Endpoint:   gachaEndpoint,
 		EndpointId: endpointId,
 	}
 
 	service.GachaSystemRepository.Save(ctx, &gachaSystem)
 
+	endpoint := fmt.Sprintf("%s/%s", os.Getenv("GACHA_PULL_URL"), gachaSystem.EndpointId)
 	return &web.GachaSystemDetailResponse{
 		Id:       gachaSystem.Id,
 		Name:     gachaSystem.Name,
-		Endpoint: gachaSystem.Endpoint,
+		Endpoint: endpoint,
 	}
 }
 
@@ -85,10 +83,11 @@ func (service *GachaSystemServiceImpl) FindById(ctx context.Context, id int) *we
 		panic(exception.NewNotFoundError("Gacha system not found"))
 	}
 
+	endpoint := fmt.Sprintf("%s/%s", os.Getenv("GACHA_PULL_URL"), gachaSystem.EndpointId)
 	return &web.GachaSystemDetailResponse{
 		Id:       gachaSystem.Id,
 		Name:     gachaSystem.Name,
-		Endpoint: gachaSystem.Endpoint,
+		Endpoint: endpoint,
 	}
 }
 
@@ -121,10 +120,11 @@ func (service *GachaSystemServiceImpl) FindByNameAndUserId(ctx context.Context, 
 		panic(exception.NewNotFoundError("Gacha system not found"))
 	}
 
+	endpoint := fmt.Sprintf("%s/%s", os.Getenv("GACHA_PULL_URL"), gachaSystem.EndpointId)
 	return &web.GachaSystemDetailResponse{
 		Id:       gachaSystem.Id,
 		Name:     gachaSystem.Name,
-		Endpoint: gachaSystem.Endpoint,
+		Endpoint: endpoint,
 	}
 }
 
@@ -134,15 +134,15 @@ func shiftString(input string, shiftCount int) string {
 	return input[shiftCount:] + input[:shiftCount]
 }
 
-func createEndpoint(gachaName string, userId int) string {
+func createEndpointId(gachaName string, userId int) string {
 	shiftCount := userId % 6
 	shiftedGachaName := shiftString(gachaName, shiftCount)
 	combined := fmt.Sprintf("%s%d", shiftedGachaName, userId)
 
 	var sha = sha1.New()
 	sha.Write([]byte(combined))
-	var encrypted = sha.Sum(nil)
-	gachaEndpoint := fmt.Sprintf("%s/%x", os.Getenv("GACHA_PULL_URL"), encrypted)
+	var encrypted = base64.URLEncoding.EncodeToString(sha.Sum(nil))
 
-	return gachaEndpoint
+	log.Printf("Encrypted: %s", encrypted)
+	return encrypted
 }

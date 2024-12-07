@@ -26,8 +26,8 @@ func NewGachaSystemRepository(dbpool *pgxpool.Pool) GachaSystemRepository {
 }
 
 func (repository *GachaSystemRepositoryImpl) Save(ctx context.Context, gachaSystem *domain.GachaSystem) {
-	query := `INSERT INTO gacha_system (name, user_id, endpoint, endpoint_id) 
-				VALUES ($1, $2, $3, $4) RETURNING id`
+	query := `INSERT INTO gacha_system (name, user_id, endpoint_id) 
+				VALUES ($1, $2, $3) RETURNING id`
 
 	tx, err := repository.Dbpool.Begin(ctx)
 	helper.PanicIfError(err, helper.ErrBeginTransaction)
@@ -35,14 +35,14 @@ func (repository *GachaSystemRepositoryImpl) Save(ctx context.Context, gachaSyst
 	defer helper.CommitOrRollback(tx, ctx)
 
 	var id int
-	err = tx.QueryRow(ctx, query, gachaSystem.Name, gachaSystem.UserId, gachaSystem.Endpoint, gachaSystem.EndpointId).Scan(&id)
+	err = tx.QueryRow(ctx, query, gachaSystem.Name, gachaSystem.UserId, gachaSystem.EndpointId).Scan(&id)
 	helper.PanicIfError(err, helper.ErrUserNotFound)
 
 	gachaSystem.Id = id
 }
 
 func (repository *GachaSystemRepositoryImpl) FindByNameAndUserId(ctx context.Context, name string, userId int) *domain.GachaSystem {
-	query := `SELECT id, name, endpoint
+	query := `SELECT id, name, endpoint_id
 			FROM gacha_system
 			WHERE LOWER(name) = LOWER($1) AND user_id = $2`
 
@@ -54,7 +54,7 @@ func (repository *GachaSystemRepositoryImpl) FindByNameAndUserId(ctx context.Con
 	row := tx.QueryRow(ctx, query, name, userId)
 
 	var gachaSystem domain.GachaSystem
-	err = row.Scan(&gachaSystem.Id, &gachaSystem.Name, &gachaSystem.Endpoint)
+	err = row.Scan(&gachaSystem.Id, &gachaSystem.Name, &gachaSystem.EndpointId)
 	if err != nil {
 		return nil
 	}
@@ -63,7 +63,7 @@ func (repository *GachaSystemRepositoryImpl) FindByNameAndUserId(ctx context.Con
 }
 
 func (repository *GachaSystemRepositoryImpl) FindByIdAndUserId(ctx context.Context, id int, userId int) *domain.GachaSystem {
-	query := `SELECT id, name, endpoint
+	query := `SELECT id, name, endpoint_id
 			FROM gacha_system
 			WHERE id = $1 AND user_id = $2`
 
@@ -75,7 +75,7 @@ func (repository *GachaSystemRepositoryImpl) FindByIdAndUserId(ctx context.Conte
 	row := tx.QueryRow(ctx, query, id, userId)
 
 	var gachaSystem domain.GachaSystem
-	err = row.Scan(&gachaSystem.Id, &gachaSystem.Name, &gachaSystem.Endpoint)
+	err = row.Scan(&gachaSystem.Id, &gachaSystem.Name, &gachaSystem.EndpointId)
 	if err != nil {
 		return nil
 	}
@@ -84,7 +84,7 @@ func (repository *GachaSystemRepositoryImpl) FindByIdAndUserId(ctx context.Conte
 }
 
 func (repository *GachaSystemRepositoryImpl) FindAllByUserId(ctx context.Context, userId int) []domain.GachaSystem {
-	query := `SELECT id, name, endpoint
+	query := `SELECT id, name, endpoint_id
               FROM gacha_system
               WHERE user_id = $1`
 
@@ -102,7 +102,7 @@ func (repository *GachaSystemRepositoryImpl) FindAllByUserId(ctx context.Context
 	var gachaSystems []domain.GachaSystem
 	for rows.Next() {
 		var gachaSystem domain.GachaSystem
-		if err := rows.Scan(&gachaSystem.Id, &gachaSystem.Name, &gachaSystem.Endpoint); err != nil {
+		if err := rows.Scan(&gachaSystem.Id, &gachaSystem.Name, &gachaSystem.EndpointId); err != nil {
 			return nil
 		}
 		gachaSystems = append(gachaSystems, gachaSystem)
